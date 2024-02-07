@@ -4,6 +4,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 
 from authentication.models import User
+from authentication.validation import clean_gmail
 from utils.authentication import generate_access_token
 from utils.response import CustomResponse
 
@@ -17,24 +18,24 @@ class UserRegistrationView(APIView):
     def post(self, request):
         serialized_data = UserAuthenticationSerializer(data=request.data)
 
-        if serialized_data.is_valid():
-            user = serialized_data.save()
-            access_token = generate_access_token(user)
-
-            return CustomResponse(
-                message="User registered successfully",
-                data={
-                    "user": UserAuthenticationSerializer(user).data,
-                    "access_token": access_token,
-                },
-                status=status.HTTP_201_CREATED,
-            )
-        else:
+        if not serialized_data.is_valid():
             return CustomResponse(
                 message="User registration unsuccessful",
                 errors=serialized_data.errors,
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+        user = serialized_data.save()
+        access_token = generate_access_token(user)
+
+        return CustomResponse(
+            message="User registered successfully",
+            data={
+                "user": UserAuthenticationSerializer(user).data,
+                "access_token": access_token,
+            },
+            status=status.HTTP_201_CREATED,
+        )
 
 
 class UserLoginView(APIView):
@@ -42,13 +43,12 @@ class UserLoginView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
-        email = request.data.get("email")
-        password = request.data.get("password")
+        email = request.data.get("email", "")
+        password = request.data.get("password", "")
 
-        user = User.objects.filter(email=email).first()
+        user = User.objects.filter(email=clean_gmail(email)).first()
 
-        password_matched = check_password(password=password, encoded=user.password)
-        if password_matched:
+        if user and check_password(password=password, encoded=user.password):
             # Authentication successful
             access_token = generate_access_token(user)
 
@@ -60,10 +60,10 @@ class UserLoginView(APIView):
                 },
                 status=status.HTTP_200_OK,
             )
-        else:
-            # Authentication failed
-            return CustomResponse(
-                message="Login unsuccessful",
-                status=status.HTTP_401_UNAUTHORIZED,
-                errors="Invalid credentials",
-            )
+
+        # Authentication failed
+        return CustomResponse(
+            message="Login unsuccessful",
+            status=status.HTTP_401_UNAUTHORIZED,
+            errors="Invalid credentials",
+        )
