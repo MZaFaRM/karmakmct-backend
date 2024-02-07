@@ -90,15 +90,12 @@ WSGI_APPLICATION = "karmakmct.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.mysql",
+        "ENGINE": config("DB_ENGINE"),
         "NAME": config("DB_NAME"),
         "USER": config("DB_USER"),
         "PASSWORD": config("DB_PASSWORD"),
-        "HOST": config("DB_HOST"),
-        "PORT": config("DB_PORT", default="3306"),
-        "OPTIONS": {
-            "charset": "utf8mb4",
-        },
+        "HOST": 'dpg-cn0tq3da73kc73edkd60-a.oregon-postgres.render.com',
+        "PORT": config("DB_PORT"),
     }
 }
 
