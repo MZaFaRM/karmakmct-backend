@@ -94,7 +94,7 @@ DATABASES = {
         "NAME": config("DB_NAME"),
         "USER": config("DB_USER"),
         "PASSWORD": config("DB_PASSWORD"),
-        "HOST": 'dpg-cn0tq3da73kc73edkd60-a.oregon-postgres.render.com',
+        "HOST": config("DB_HOST"),
         "PORT": config("DB_PORT"),
     }
 }
