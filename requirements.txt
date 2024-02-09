@@ -5,3 +5,4 @@ python-decouple==3.8
 # mysqlclient==2.0.3
 # mysql-connector-python==8.3.0
 psycopg2==2.9.9
+django-cors-headers==4.3.1

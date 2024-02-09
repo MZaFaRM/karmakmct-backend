@@ -30,14 +30,14 @@ ALLOWED_HOSTS = config(
     "ALLOWED_HOSTS", default="", cast=lambda v: [s.strip() for s in v.split(",")]
 )
 
-CORS_ALLOW_ALL_ORIGINS = "*"
+CORS_ALLOW_ALL_ORIGINS = True
 
 # Application definition
 
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
-    "corsheaders",
+    "corsheaders",  
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
