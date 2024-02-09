@@ -30,6 +30,8 @@ ALLOWED_HOSTS = config(
     "ALLOWED_HOSTS", default="", cast=lambda v: [s.strip() for s in v.split(",")]
 )
 
+CORS_ALLOW_ALL_ORIGINS = True
+
 
 # Application definition
 
