@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 
-from authentication.models import User
+from authentication.models import CampusAmbassador
 from authentication.validation import clean_gmail
 from utils.authentication import generate_access_token
 from utils.response import CustomResponse
@@ -46,7 +46,7 @@ class UserLoginView(APIView):
         email = request.data.get("email", "")
         password = request.data.get("password", "")
 
-        user = User.objects.filter(email=clean_gmail(email)).first()
+        user = CampusAmbassador.objects.filter(email=clean_gmail(email)).first()
 
         if user and check_password(password=password, encoded=user.password):
             # Authentication successful

@@ -3,12 +3,14 @@ from django.core.exceptions import ValidationError
 from rest_framework import serializers
 
 from authentication.validation import clean_gmail
+from utils.authentication import generate_referral_code
 
-from .models import User
+from .models import CampusAmbassador
 
 
 class UserAuthenticationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
+    referral_code = serializers.CharField(read_only=True)
 
     def to_representation(self, instance):
         value = super().to_representation(instance)
@@ -17,7 +19,7 @@ class UserAuthenticationSerializer(serializers.ModelSerializer):
 
     def validate_email(self, email):
         email = clean_gmail(email)
-        if User.objects.filter(email=email).exists():
+        if CampusAmbassador.objects.filter(email=email).exists():
             raise ValidationError("user with this email already exists")
         return email
 
@@ -28,11 +30,12 @@ class UserAuthenticationSerializer(serializers.ModelSerializer):
                 "email": validated_data.get("email"),
                 "name": validated_data.get("name").strip(),
                 "college": validated_data.get("college", "").strip(),
+                "referral_code": generate_referral_code(),
             }
         )
 
         return super().create(validated_data)
 
     class Meta:
-        model = User
-        fields = ["name", "email", "password", "college", "phone"]
+        model = CampusAmbassador
+        fields = ["name", "email", "password", "college", "phone", "referral_code"]
